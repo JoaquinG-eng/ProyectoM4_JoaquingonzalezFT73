@@ -1,0 +1,16 @@
+.dashboard {
+  display: flex;
+
+  min-height: 100vh;
+}
+
+.dashboard__content {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard__body {
+  padding: 32px;
+}

@@ -1,0 +1,99 @@
+@import "./variables.css";
+
+/* =======================================================
+   RESET
+======================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =======================================================
+   BODY
+======================================================= */
+
+body {
+  min-height: 100vh;
+
+  font-family:
+    Inter,
+    system-ui,
+    sans-serif;
+
+  background:
+    radial-gradient(circle at top left,
+      #1b1b3a 0%,
+      #0b1020 40%);
+
+  color: var(--color-text);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =======================================================
+   ROOT
+======================================================= */
+
+#root {
+  min-height: 100vh;
+}
+
+/* =======================================================
+   BOTONES
+======================================================= */
+
+button {
+  border: none;
+  outline: none;
+
+  cursor: pointer;
+
+  transition: var(--transition-default);
+
+  font: inherit;
+}
+
+/* =======================================================
+   INPUTS
+======================================================= */
+
+input,
+textarea,
+select {
+  font: inherit;
+
+  border: 1px solid var(--color-border);
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  border-radius: var(--radius-small);
+
+  outline: none;
+}
+
+/* =======================================================
+   SCROLLBAR
+======================================================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

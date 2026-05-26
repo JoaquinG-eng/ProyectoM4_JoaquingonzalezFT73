@@ -1,5 +1,7 @@
+import DashboardPage from "./pages/dashboard/DashboardPage";
+
 function App() {
-  return <h1>Mitake</h1>;
+  return <DashboardPage />;
 }
 
 export default App;
