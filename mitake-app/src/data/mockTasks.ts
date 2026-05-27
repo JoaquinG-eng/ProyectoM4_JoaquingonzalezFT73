@@ -9,12 +9,16 @@ export const mockTasks: Tarea[] = [
     descripcion:
       "Crear estructura visual principal",
 
-    estado: "por-hacer",
+    estado: "pendiente",
 
-    prioridad: "high",
+    prioridad: "alta",
 
     fechaCreacion:
       new Date().toISOString(),
+
+    progreso: 0,
+
+    estaEnPapelera: false,
   },
 
   {
@@ -27,10 +31,14 @@ export const mockTasks: Tarea[] = [
 
     estado: "en-progreso",
 
-    prioridad: "medium",
+    prioridad: "media",
 
     fechaCreacion:
       new Date().toISOString(),
+
+    progreso: 40,
+
+    estaEnPapelera: false,
   },
 
   {
@@ -41,11 +49,15 @@ export const mockTasks: Tarea[] = [
     descripcion:
       "Cards dinámicas del dashboard",
 
-    estado: "hecho",
+    estado: "completada",
 
-    prioridad: "low",
+    prioridad: "alta",
 
     fechaCreacion:
       new Date().toISOString(),
+
+    progreso: 100,
+
+    estaEnPapelera: false,
   },
 ];

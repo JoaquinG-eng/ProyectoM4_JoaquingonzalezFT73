@@ -4,15 +4,52 @@ export type EstadoTarea =
   | "completada";
 
 export type PrioridadTarea =
-  | "baja"
+  | "alta"
   | "media"
-  | "alta";
+  | "baja";
+
+// ============================================================
+// MODELO PRINCIPAL
+// ============================================================
 
 export interface Tarea {
   id: string;
+
   titulo: string;
+
   descripcion: string;
+
   estado: EstadoTarea;
+
   prioridad: PrioridadTarea;
+
   fechaCreacion: string;
+
+  // ==========================================================
+  // NUEVAS PROPIEDADES
+  // ==========================================================
+
+  fechaLimite?: string;
+
+  progreso: number;
+
+  estaEnPapelera: boolean;
+
+  fechaEliminacion?: string;
 }
+
+// ============================================================
+// TAREA NUEVA
+// ============================================================
+
+export type TareaNueva = {
+  titulo: string;
+
+  descripcion: string;
+
+  estado: EstadoTarea;
+
+  prioridad: PrioridadTarea;
+
+  fechaLimite?: string;
+};

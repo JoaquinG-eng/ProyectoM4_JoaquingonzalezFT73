@@ -1,110 +1,249 @@
+// ============================================================
+// ARCHIVO: src/pages/dashboard/DashboardPage.tsx
+// ¿Para qué sirve? Página principal del dashboard.
+// Orquesta todos los componentes y maneja la navegación
+// entre secciones: Dashboard, Papelera y About.
+// ============================================================
+
+import { useState } from "react";
+
+import { useTasks } from "../../hooks/useTasks";
+
 import Sidebar from "../../components/layout/Sidebar/Sidebar";
 import Topbar from "../../components/layout/Topbar/Topbar";
 import StatCard from "../../components/ui/StatCard/StatCard";
-import TaskForm from "../../components/tasks/TaskForm/TaskForm";
 import TaskCard from "../../components/tasks/TaskCard/TaskCard";
+import TaskForm from "../../components/tasks/TaskForm/TaskForm";
 import KanbanBoard from "../../components/kanban/KanbanBoard/KanbanBoard";
-import useTasks from "../../hooks/useTasks";
+import PapeleraPage from "../papelera/PapeleraPage";
+import AboutPage from "../about/AboutPage";
+
 import "./DashboardPage.css";
 
+import type { TareaNueva } from "../../types/task";
+
+// ------------------------------------------------------------
+// COMPONENTE: DashboardPage
+// ------------------------------------------------------------
 function DashboardPage() {
   const {
-    tareas,
+    tareasActivas,
+    tareasEnPapelera,
     crearTarea,
-    eliminarTarea,
-    cambiarEstado,          // ← nombre correcto del hook
+    cambiarEstadoTarea,
+    actualizarProgreso,
+    moverAPapelera,
+    restaurarDePapelera,
+    eliminarPermanentemente,
+    vaciarPapelera,
   } = useTasks();
 
-  const tareasCompletadas = tareas.filter(
+  const [seccionActiva, setSeccionActiva] = useState<string>("dashboard");
+  const [formularioEstaVisible, setFormularioEstaVisible] = useState<boolean>(false);
+
+  // --------------------------------------------------------
+  // FUNCIÓN: manejarCreacionDeTarea
+  // --------------------------------------------------------
+  function manejarCreacionDeTarea(datosNuevos: TareaNueva): void {
+    crearTarea(datosNuevos);
+    setFormularioEstaVisible(false);
+  }
+
+  // --------------------------------------------------------
+  // ESTADÍSTICAS calculadas desde las tareas activas
+  // --------------------------------------------------------
+  const tareasCompletadas = tareasActivas.filter(
     (tarea) => tarea.estado === "completada"
   ).length;
 
-  const tareasEnProgreso = tareas.filter(
+  const tareasEnProgreso = tareasActivas.filter(
     (tarea) => tarea.estado === "en-progreso"
   ).length;
 
-  const tareasPendientes = tareas.filter(
+  const tareasPendientes = tareasActivas.filter(
     (tarea) => tarea.estado === "pendiente"
   ).length;
 
+  const progresoPromedio =
+    tareasActivas.length > 0
+      ? Math.round(
+          tareasActivas.reduce((suma, tarea) => suma + tarea.progreso, 0) /
+            tareasActivas.length
+        )
+      : 0;
+
+  // --------------------------------------------------------
+  // RENDER según la sección activa
+  // --------------------------------------------------------
+
+  // Papelera
+  if (seccionActiva === "papelera") {
+    return (
+      <div className="contenedor-dashboard">
+        <Sidebar
+          seccionActiva={seccionActiva}
+          alCambiarSeccion={setSeccionActiva}
+          cantidadEnPapelera={tareasEnPapelera.length}
+        />
+        <div className="contenido-principal">
+          <Topbar
+            tituloSeccion="Papelera"
+            subtituloSeccion="Tareas eliminadas"
+          />
+          <main className="area-scroll">
+            <PapeleraPage
+              tareasEnPapelera={tareasEnPapelera}
+              alRestaurar={restaurarDePapelera}
+              alEliminarPermanentemente={eliminarPermanentemente}
+              alVaciarPapelera={vaciarPapelera}
+            />
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  // About
+  if (seccionActiva === "about") {
+    return (
+      <div className="contenedor-dashboard">
+        <Sidebar
+          seccionActiva={seccionActiva}
+          alCambiarSeccion={setSeccionActiva}
+          cantidadEnPapelera={tareasEnPapelera.length}
+        />
+        <div className="contenido-principal">
+          <Topbar
+            tituloSeccion="Sobre Mitake"
+            subtituloSeccion="Conocé el proyecto"
+          />
+          <main className="area-scroll">
+            <AboutPage />
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  // Dashboard principal
   return (
-    <div className="dashboard">
-      <Sidebar />
+    <div className="contenedor-dashboard">
 
-      <main className="dashboard__content">
-        <Topbar />
+      <Sidebar
+        seccionActiva={seccionActiva}
+        alCambiarSeccion={setSeccionActiva}
+        cantidadEnPapelera={tareasEnPapelera.length}
+      />
 
-        <section className="dashboard__body">
+      <div className="contenido-principal">
 
-          {/* Stats */}
-          <section className="dashboard__stats">
+        <Topbar
+          tituloSeccion="Dashboard"
+          subtituloSeccion="Gestioná tus tareas y tickets."
+          botonPrimario={{
+            etiqueta: "Nueva tarea",
+            alHacerClick: () => setFormularioEstaVisible(true),
+          }}
+        />
+
+        <main className="area-scroll">
+
+          {/* Stat Cards */}
+          <section className="seccion-stats">
             <StatCard
-              titulo="Tareas completadas"
-              valor={String(tareasCompletadas)}
-              descripcion="Tareas finalizadas"
-              variante="primary"
+              tituloEstadistica="Tareas completadas"
+              valorPrincipal={tareasCompletadas}
+              descripcionSecundaria="Tareas finalizadas"
+              colorDeFondo="linear-gradient(135deg, #7c5af6, #5a3dd4)"
+              icono="✓"
             />
             <StatCard
-              titulo="En progreso"
-              valor={String(tareasEnProgreso)}
-              descripcion="Tareas activas"
-              variante="warning"
+              tituloEstadistica="En progreso"
+              valorPrincipal={tareasEnProgreso}
+              descripcionSecundaria="Tareas activas"
+              colorDeFondo="linear-gradient(135deg, #e89d2a, #c47d18)"
+              icono="⟳"
             />
             <StatCard
-              titulo="Pendientes"
-              valor={String(tareasPendientes)}
-              descripcion="Tareas por realizar"
+              tituloEstadistica="Pendientes"
+              valorPrincipal={tareasPendientes}
+              descripcionSecundaria="Tareas por realizar"
+              colorDeFondo="linear-gradient(135deg, #1d9e75, #157a5a)"
+              icono="○"
             />
-          </section>
-
-          {/* Formulario */}
-          <section className="dashboard__section">
-            <div className="dashboard__section-header">
-              <h2>Crear tarea</h2>
-            </div>
-            <TaskForm crearTarea={crearTarea} />
+            <StatCard
+              tituloEstadistica="Progreso global"
+              valorPrincipal={`${progresoPromedio}%`}
+              descripcionSecundaria="Promedio de avance"
+              colorDeFondo="linear-gradient(135deg, #3b9eed, #2478c7)"
+              icono="↑"
+            />
           </section>
 
           {/* Tareas recientes */}
-          <section className="dashboard__section">
-            <div className="dashboard__section-header">
-              <h2>Tareas recientes</h2>
-              <button>Ver todas</button>
+          <section className="seccion-tareas">
+            <div className="seccion-encabezado">
+              <div className="seccion-encabezado__texto">
+                <h2 className="seccion-titulo">Tareas recientes</h2>
+                <p className="seccion-subtitulo">
+                  {tareasActivas.length} tarea
+                  {tareasActivas.length !== 1 ? "s" : ""} activa
+                  {tareasActivas.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+              <button
+                className="boton-ver-todas"
+                onClick={() => setSeccionActiva("mis-tareas")}
+              >
+                Ver todas →
+              </button>
             </div>
 
-            <div className="dashboard__tasks">
-              {tareas.length === 0 ? (
-                <div className="dashboard__placeholder">
-                  No hay tareas todavía
-                </div>
-              ) : (
-                tareas.map((tarea) => (
+            {tareasActivas.length === 0 ? (
+              <div className="estado-vacio">
+                <div className="estado-vacio__icono">📋</div>
+                <p className="estado-vacio__texto">No tenés tareas todavía</p>
+                <button
+                  className="estado-vacio__boton"
+                  onClick={() => setFormularioEstaVisible(true)}
+                >
+                  Crear primera tarea
+                </button>
+              </div>
+            ) : (
+              <div className="grid-tareas">
+                {tareasActivas.slice(0, 6).map((tareaActual) => (
                   <TaskCard
-                    key={tarea.id}
-                    tarea={tarea}
-                    eliminarTarea={eliminarTarea}
-                    cambiarEstadoTarea={cambiarEstado}  // ← mapeado al nombre correcto
+                    key={tareaActual.id}
+                    datosDeLaTarea={tareaActual}
+                    alCambiarEstado={cambiarEstadoTarea}
+                    alActualizarProgreso={actualizarProgreso}
+                    alMoverAPapelera={moverAPapelera}
                   />
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Kanban */}
-          <section className="dashboard__section">
-            <div className="dashboard__section-header">
-              <h2>Kanban de tickets</h2>
-              <button>Abrir tablero</button>
-            </div>
-            <KanbanBoard
-              tareas={tareas}
-              eliminarTarea={eliminarTarea}
-              cambiarEstadoTarea={cambiarEstado}  // ← mapeado al nombre correcto
-            />
-          </section>
+          <KanbanBoard
+            tareas={tareasActivas}
+            alCambiarEstado={cambiarEstadoTarea}
+            alActualizarProgreso={actualizarProgreso}
+            alMoverAPapelera={moverAPapelera}
+          />
 
-        </section>
-      </main>
+        </main>
+      </div>
+
+      {/* Modal de nueva tarea */}
+      {formularioEstaVisible && (
+        <TaskForm
+          alConfirmar={manejarCreacionDeTarea}
+          alCancelar={() => setFormularioEstaVisible(false)}
+        />
+      )}
+
     </div>
   );
 }

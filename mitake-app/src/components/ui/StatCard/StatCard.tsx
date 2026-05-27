@@ -1,22 +1,50 @@
-interface StatCardProps {
-  titulo: string;
-  valor: string;
-  descripcion: string;
-  variante?: "primary" | "warning" | "default";
-}
+type StatCardProps = {
+  tituloEstadistica: string;
+
+  valorPrincipal:
+    | string
+    | number;
+
+  descripcionSecundaria: string;
+
+  colorDeFondo: string;
+
+  icono: string;
+};
 
 function StatCard({
-  titulo,
-  valor,
-  descripcion,
-  variante = "default",
+  tituloEstadistica,
+  valorPrincipal,
+  descripcionSecundaria,
+  colorDeFondo,
+  icono,
 }: StatCardProps) {
   return (
-    <div className={`stat-card stat-card--${variante}`}>
-      <p className="stat-card__titulo">{titulo}</p>
-      <p className="stat-card__valor">{valor}</p>
-      <p className="stat-card__descripcion">{descripcion}</p>
-    </div>
+    <article
+      className="stat-card"
+      style={{
+        background:
+          colorDeFondo,
+      }}
+    >
+      <div className="stat-card__icono">
+        {icono}
+      </div>
+
+      <h3>
+        {tituloEstadistica}
+      </h3>
+
+      <strong>
+        {valorPrincipal}
+      </strong>
+
+      <p>
+        {
+          descripcionSecundaria
+        }
+      </p>
+    </article>
   );
 }
 

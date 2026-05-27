@@ -3,27 +3,20 @@ import { useState } from "react";
 import type {
   EstadoTarea,
   PrioridadTarea,
+  TareaNueva,
 } from "../../../types/task";
 
+import "./TaskForm.css";
+
 type TaskFormProps = {
-  crearTarea: (tarea: {
-    titulo: string;
-
-    descripcion: string;
-
-    estado: EstadoTarea;
-
-    prioridad: PrioridadTarea;
-  }) => void;
+  alConfirmar: (datos: TareaNueva) => void;
+  alCancelar: () => void;
 };
 
 function TaskForm({
-  crearTarea,
+  alConfirmar,
+  alCancelar,
 }: TaskFormProps) {
-  // ============================================================
-  // Estados
-  // ============================================================
-
   const [titulo, setTitulo] =
     useState("");
 
@@ -33,16 +26,14 @@ function TaskForm({
   ] = useState("");
 
   const [estado, setEstado] =
-    useState<EstadoTarea>("por-hacer");
+    useState<EstadoTarea>(
+      "pendiente",
+    );
 
   const [prioridad, setPrioridad] =
     useState<PrioridadTarea>(
-      "medium",
+      "media",
     );
-
-  // ============================================================
-  // Submit
-  // ============================================================
 
   function handleSubmit(
     e: React.FormEvent,
@@ -51,123 +42,109 @@ function TaskForm({
 
     if (!titulo.trim()) return;
 
-    crearTarea({
+    alConfirmar({
       titulo,
-
       descripcion,
-
       estado,
-
       prioridad,
     });
-
-    // ============================================================
-    // Limpiar formulario
-    // ============================================================
 
     setTitulo("");
 
     setDescripcion("");
 
-    setEstado("por-hacer");
+    setEstado("pendiente");
 
-    setPrioridad("medium");
+    setPrioridad("media");
   }
 
   return (
-    <form
-      className="task-form"
-      onSubmit={handleSubmit}
-    >
-      <h2>Nueva tarea</h2>
-
-      {/* ======================================================== */}
-      {/* Título */}
-      {/* ======================================================== */}
-
-      <input
-        type="text"
-        placeholder="Título"
-        value={titulo}
-        onChange={(e) =>
-          setTitulo(e.target.value)
-        }
-      />
-
-      {/* ======================================================== */}
-      {/* Descripción */}
-      {/* ======================================================== */}
-
-      <textarea
-        placeholder="Descripción"
-        value={descripcion}
-        onChange={(e) =>
-          setDescripcion(
-            e.target.value,
-          )
-        }
-      />
-
-      {/* ======================================================== */}
-      {/* Estado */}
-      {/* ======================================================== */}
-
-      <select
-        value={estado}
-        onChange={(e) =>
-          setEstado(
-            e.target
-              .value as EstadoTarea,
-          )
-        }
+    <div className="modal-overlay">
+      <form
+        className="task-form"
+        onSubmit={handleSubmit}
       >
-        <option value="todo">
-          Por hacer
-        </option>
+        <h2>Nueva tarea</h2>
 
-        <option value="in-progress">
-          En proceso
-        </option>
+        <input
+          type="text"
+          placeholder="Título"
+          value={titulo}
+          onChange={(e) =>
+            setTitulo(
+              e.target.value,
+            )
+          }
+        />
 
-        <option value="done">
-          Hecho
-        </option>
-      </select>
+        <textarea
+          placeholder="Descripción"
+          value={descripcion}
+          onChange={(e) =>
+            setDescripcion(
+              e.target.value,
+            )
+          }
+        />
 
-      {/* ======================================================== */}
-      {/* Prioridad */}
-      {/* ======================================================== */}
+        <select
+          value={estado}
+          onChange={(e) =>
+            setEstado(
+              e.target
+                .value as EstadoTarea,
+            )
+          }
+        >
+          <option value="pendiente">
+            Pendiente
+          </option>
 
-      <select
-        value={prioridad}
-        onChange={(e) =>
-          setPrioridad(
-            e.target
-              .value as PrioridadTarea,
-          )
-        }
-      >
-        <option value="low">
-          LOW
-        </option>
+          <option value="en-progreso">
+            En progreso
+          </option>
 
-        <option value="medium">
-          MEDIUM
-        </option>
+          <option value="completada">
+            Completada
+          </option>
+        </select>
 
-        <option value="high">
-          HIGH
-        </option>
-      </select>
+        <select
+          value={prioridad}
+          onChange={(e) =>
+            setPrioridad(
+              e.target
+                .value as PrioridadTarea,
+            )
+          }
+        >
+          <option value="alta">
+            Alta
+          </option>
 
-      {/* ======================================================== */}
-      {/* Botón */}
-      {/* ======================================================== */}
+          <option value="media">
+            Media
+          </option>
 
-      <button type="submit">
-        Crear tarea
-      </button>
-    </form>
+          <option value="baja">
+            Baja
+          </option>
+        </select>
+
+        <div className="task-form__actions">
+          <button type="submit">
+            Crear tarea
+          </button>
+
+          <button
+            type="button"
+            onClick={alCancelar}
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 

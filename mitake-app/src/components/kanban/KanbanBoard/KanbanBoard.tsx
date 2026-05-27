@@ -10,109 +10,93 @@ import "./KanbanBoard.css";
 type KanbanBoardProps = {
   tareas: Tarea[];
 
-  eliminarTarea: (
+  alCambiarEstado: (
     id: string,
+    nuevoEstado: EstadoTarea,
   ) => void;
 
-  cambiarEstadoTarea: (
+  alActualizarProgreso: (
     id: string,
-    estado: EstadoTarea,
+    progresoNuevo: number,
+  ) => void;
+
+  alMoverAPapelera: (
+    id: string,
   ) => void;
 };
 
 function KanbanBoard({
   tareas,
-  eliminarTarea,
-  cambiarEstadoTarea,
+  alCambiarEstado,
+  alActualizarProgreso,
+  alMoverAPapelera,
 }: KanbanBoardProps) {
-  // ============================================================
-  // Columnas
-  // ============================================================
-
-  const columnas: {
-    titulo: string;
-
-    estado: EstadoTarea;
-  }[] = [
+  const columnas = [
     {
-      titulo: "To Do",
-
+      titulo: "Pendientes",
       estado: "pendiente",
     },
-
     {
-      titulo: "In Progress",
-
+      titulo: "En progreso",
       estado: "en-progreso",
     },
-
     {
-      titulo: "Done",
-
+      titulo: "Completadas",
       estado: "completada",
     },
   ];
 
   return (
-    <div className="kanban-board">
-      {columnas.map((columna) => {
-        const tareasFiltradas =
-          tareas.filter(
-            (tarea) =>
-              tarea.estado ===
-              columna.estado,
-          );
-
-        return (
+    <section className="kanban">
+      <div className="kanban__grid">
+        {columnas.map((columna) => (
           <div
             key={columna.estado}
-            className="kanban-column"
+            className="kanban__column"
           >
-            {/* ======================================================== */}
-            {/* Header */}
-            {/* ======================================================== */}
-
-            <div className="kanban-column__header">
-              <h3>{columna.titulo}</h3>
+            <h3>
+              {columna.titulo}
 
               <span>
                 {
-                  tareasFiltradas.length
+                  tareas.filter(
+                    (tarea) =>
+                      tarea.estado ===
+                      columna.estado,
+                  ).length
                 }
               </span>
-            </div>
+            </h3>
 
-            {/* ======================================================== */}
-            {/* Tasks */}
-            {/* ======================================================== */}
-
-            <div className="kanban-column__tasks">
-              {tareasFiltradas.length ===
-              0 ? (
-                <div className="kanban-column__empty">
-                  Sin tareas
-                </div>
-              ) : (
-                tareasFiltradas.map(
-                  (tarea) => (
-                    <TaskCard
-                      key={tarea.id}
-                      tarea={tarea}
-                      eliminarTarea={
-                        eliminarTarea
-                      }
-                      cambiarEstadoTarea={
-                        cambiarEstadoTarea
-                      }
-                    />
-                  ),
+            <div className="kanban__tasks">
+              {tareas
+                .filter(
+                  (tarea) =>
+                    tarea.estado ===
+                    columna.estado,
                 )
-              )}
+                .map((tarea) => (
+                  <TaskCard
+                    key={tarea.id}
+                    datosDeLaTarea={
+                      tarea
+                    }
+                    alCambiarEstado={
+                      alCambiarEstado
+                    }
+                    alActualizarProgreso={
+                      alActualizarProgreso
+                    }
+                    alMoverAPapelera={
+                      alMoverAPapelera
+                    }
+                  />
+                ))}
             </div>
           </div>
-        );
-      })}
-    </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
