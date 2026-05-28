@@ -5,18 +5,19 @@
 import { useState } from "react";
 
 import { useTasks } from "../../hooks/useTasks";
+import { useAlert } from "../../hooks/useAlert";
 
-import type { TareaNueva } from "../../types/task";
+import type { TareaNueva, EstadoTarea } from "../../types/task";
 
-import Sidebar       from "../../components/layout/Sidebar/Sidebar";
-import Topbar        from "../../components/layout/Topbar/Topbar";
-import TaskForm      from "../../components/tasks/TaskForm/TaskForm";
-import KanbanBoard   from "../../components/kanban/KanbanBoard/KanbanBoard";
-import StatCard      from "../../components/ui/StatCard/StatCard";
-import ActivityFeed  from "../../components/ui/ActivityFeed/ActivityFeed";
+import Sidebar from "../../components/layout/Sidebar/Sidebar";
+import Topbar from "../../components/layout/Topbar/Topbar";
+import TaskForm from "../../components/tasks/TaskForm/TaskForm";
+import KanbanBoard from "../../components/kanban/KanbanBoard/KanbanBoard";
+import StatCard from "../../components/ui/StatCard/StatCard";
+import ActivityFeed from "../../components/ui/ActivityFeed/ActivityFeed";
 import AlertContainer from "../../components/ui/Alert/Alert";
-import PapeleraPage  from "../papelera/PapeleraPage";
-import AboutPage     from "../about/AboutPage";
+import PapeleraPage from "../papelera/PapeleraPage";
+import AboutPage from "../about/AboutPage";
 
 import "./DashboardPage.css";
 
@@ -28,6 +29,7 @@ type SeccionActiva =
   | "about";
 
 export default function DashboardPage() {
+  const { alertaExito, alertaInfo, alertaAdvertencia, alertaError } = useAlert();
   const {
     tareasActivas,
     tareasEnPapelera,
@@ -35,7 +37,7 @@ export default function DashboardPage() {
     crearTarea,
     editarTarea,
     cambiarEstadoTarea,
-    actualizarProgreso,
+    actualizarProgreso,   
     moverAPapelera,
     restaurarDePapelera,
     eliminarPermanentemente,
@@ -47,26 +49,73 @@ export default function DashboardPage() {
   const [sidebarAbierto, setSidebarAbierto] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
+  // Estados para filtros en "Mis Tareas"
+  const [filtroTexto, setFiltroTexto] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState<EstadoTarea | "todas">("todas");
+
   function manejarCreacionDeTarea(datos: TareaNueva): void {
     crearTarea(datos);
+    alertaExito("Tarea creada correctamente", "¡Éxito!");
     setMostrarFormulario(false);
   }
 
+  function manejarEditarTarea(id: string, datosEditados: TareaNueva) {
+    editarTarea(id, datosEditados);
+    alertaExito("Los cambios han sido guardados", "Tarea editada");
+  }
+
+  function manejarCambioEstado(id: string, nuevoEstado: EstadoTarea) {
+    const tarea = tareasActivas.find(t => t.id === id);
+    if (tarea?.estado === nuevoEstado) return;
+
+    cambiarEstadoTarea(id, nuevoEstado);
+    if (nuevoEstado === "completada") {
+      alertaInfo(`Tarea movida a ${nuevoEstado}`, "Actualizado");
+    }
+  }
+
+  function manejarMoverAPapelera(id: string) {
+    moverAPapelera(id);
+    alertaAdvertencia("Tarea enviada a la papelera", "Eliminada");
+  }
+
+  function manejarRestaurar(id: string) {
+    restaurarDePapelera(id);
+    alertaExito("Tarea restaurada con éxito", "Restaurada");
+  }
+
+  function manejarEliminarPermanente(id: string) {
+    eliminarPermanentemente(id);
+    alertaError("Tarea eliminada de forma permanente", "Eliminada");
+  }
+
+  function manejarVaciarPapelera() {
+    vaciarPapelera();
+    alertaError("Has vaciado la papelera", "Papelera vaciada");
+  }
+
   // ---- Estadísticas ----
-  const totalTareas       = tareasActivas.length;
+  const totalTareas = tareasActivas.length;
   const tareasCompletadas = tareasActivas.filter((t) => t.estado === "completada").length;
-  const tareasEnProgreso  = tareasActivas.filter((t) => t.estado === "en-progreso").length;
-  const tareasPendientes  = tareasActivas.filter((t) => t.estado === "pendiente").length;
+  const tareasEnProgreso = tareasActivas.filter((t) => t.estado === "en-progreso").length;
+  const tareasPendientes = tareasActivas.filter((t) => t.estado === "pendiente").length;
+
+  const tareasMisTareasFiltradas = tareasActivas.filter((t) => {
+    const coincideTexto = t.titulo.toLowerCase().includes(filtroTexto.toLowerCase()) ||
+      (t.descripcion && t.descripcion.toLowerCase().includes(filtroTexto.toLowerCase()));
+    const coincideEstado = filtroEstado === "todas" || t.estado === filtroEstado;
+    return coincideTexto && coincideEstado;
+  });
 
   const configuracionTopbar: Record<
     SeccionActiva,
     { titulo: string; subtitulo: string }
   > = {
-    dashboard:    { titulo: "Dashboard",      subtitulo: `${totalTareas} tarea${totalTareas !== 1 ? "s" : ""} en total`          },
-    "mis-tareas": { titulo: "Mis tareas",     subtitulo: `${tareasPendientes} pendiente${tareasPendientes !== 1 ? "s" : ""}` },
-    tickets:      { titulo: "Tickets",        subtitulo: "Próximamente"                                                          },
-    papelera:     { titulo: "Papelera",       subtitulo: `${tareasEnPapelera.length} elemento${tareasEnPapelera.length !== 1 ? "s" : ""}` },
-    about:        { titulo: "Sobre Mitake",   subtitulo: "Información del proyecto"                                               },
+    dashboard: { titulo: "Dashboard", subtitulo: `${totalTareas} tarea${totalTareas !== 1 ? "s" : ""} en total` },
+    "mis-tareas": { titulo: "Mis tareas", subtitulo: `${tareasPendientes} pendiente${tareasPendientes !== 1 ? "s" : ""}` },
+    tickets: { titulo: "Tickets", subtitulo: "Próximamente" },
+    papelera: { titulo: "Papelera", subtitulo: `${tareasEnPapelera.length} elemento${tareasEnPapelera.length !== 1 ? "s" : ""}` },
+    about: { titulo: "Sobre Mitake", subtitulo: "Información del proyecto" },
   };
 
   const topbarActual = configuracionTopbar[seccionActiva];
@@ -138,10 +187,10 @@ export default function DashboardPage() {
               <div className="dashboard-layout__kanban-wrap">
                 <KanbanBoard
                   tareas={tareasActivas}
-                  alCambiarEstado={cambiarEstadoTarea}
+                  alCambiarEstado={manejarCambioEstado}
                   alActualizarProgreso={actualizarProgreso}
-                  alMoverAPapelera={moverAPapelera}
-                  alEditarTarea={editarTarea}
+                  alMoverAPapelera={manejarMoverAPapelera}
+                  alEditarTarea={manejarEditarTarea}
                 />
               </div>
 
@@ -156,12 +205,37 @@ export default function DashboardPage() {
         {/* ---- MIS TAREAS ---- */}
         {seccionActiva === "mis-tareas" && (
           <div className="dashboard-layout__contenido">
+
+            <div className="filtros-barra">
+              <input
+                type="text"
+                placeholder="Buscar por título o descripción..."
+                value={filtroTexto}
+                onChange={(e) => setFiltroTexto(e.target.value)}
+                className="filtros-barra__buscador"
+              />
+              <div className="filtros-barra__botones">
+                <button
+                  className={filtroEstado === "todas" ? "activo" : ""}
+                  onClick={() => setFiltroEstado("todas")}
+                >Todas</button>
+                <button
+                  className={filtroEstado === "pendiente" ? "activo" : ""}
+                  onClick={() => setFiltroEstado("pendiente")}
+                >Pendientes</button>
+                <button
+                  className={filtroEstado === "completada" ? "activo" : ""}
+                  onClick={() => setFiltroEstado("completada")}
+                >Completadas</button>
+              </div>
+            </div>
+
             <KanbanBoard
-              tareas={tareasActivas}
-              alCambiarEstado={cambiarEstadoTarea}
+              tareas={tareasMisTareasFiltradas}
+              alCambiarEstado={manejarCambioEstado}
               alActualizarProgreso={actualizarProgreso}
-              alMoverAPapelera={moverAPapelera}
-              alEditarTarea={editarTarea}
+              alMoverAPapelera={manejarMoverAPapelera}
+              alEditarTarea={manejarEditarTarea}
             />
           </div>
         )}
@@ -182,9 +256,9 @@ export default function DashboardPage() {
           <div className="dashboard-layout__contenido">
             <PapeleraPage
               tareasEnPapelera={tareasEnPapelera}
-              alRestaurar={restaurarDePapelera}
-              alEliminarPermanentemente={eliminarPermanentemente}
-              alVaciarPapelera={vaciarPapelera}
+              alRestaurar={manejarRestaurar}
+              alEliminarPermanentemente={manejarEliminarPermanente}
+              alVaciarPapelera={manejarVaciarPapelera}
             />
           </div>
         )}

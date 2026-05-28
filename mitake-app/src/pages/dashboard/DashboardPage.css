@@ -106,6 +106,68 @@
 }
 
 /* =========================================================
+   FILTROS (Mis Tareas)
+   ========================================================= */
+.filtros-barra {
+  display: flex;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filtros-barra__buscador {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  background: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.filtros-barra__buscador:focus {
+  border-color: var(--color-purple);
+  box-shadow: 0 0 0 3px var(--color-input-focus);
+}
+
+.filtros-barra__botones {
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.filtros-barra__botones button {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.filtros-barra__botones button:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.filtros-barra__botones button.activo {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a98af9;
+}
+
+/* =========================================================
    RESPONSIVE — 1200px: stats 2x2, feed debajo
    ========================================================= */
 @media (max-width: 1200px) {

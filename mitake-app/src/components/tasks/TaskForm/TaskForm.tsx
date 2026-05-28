@@ -11,7 +11,7 @@ import { useState } from "react";
 
 import type { EstadoTarea, PrioridadTarea, TareaNueva } from "../../../types/task";
 import { useFormValidation } from "../../../hooks/useFormValidation";
-import { useAlert }          from "../../../hooks/useAlert";
+import { useAlert }from "../../../hooks/useAlert";
 import {
   validarTitulo,
   validarDescripcion,
