@@ -1,5 +1,5 @@
 // ============================================================
- // ARCHIVO: src/components/tasks/TaskCard/TaskCard.tsx
+// ARCHIVO: src/components/tasks/TaskCard/TaskCard.tsx
 // ============================================================
 
 import { useState } from "react";
@@ -7,7 +7,7 @@ import type { EstadoTarea, Tarea, TareaNueva } from "../../../types/task";
 import TaskForm from "../TaskForm/TaskForm";
 import "./TaskCard.css";
 
- type TaskCardProps = {
+type TaskCardProps = {
   datosDeLaTarea: Tarea;
   alCambiarEstado: (id: string, nuevoEstado: EstadoTarea) => void;
   alActualizarProgreso: (id: string, progresoNuevo: number) => void;
@@ -15,13 +15,16 @@ import "./TaskCard.css";
   alEditarTarea: (id: string, datosEditados: TareaNueva) => void;
 };
 
- function obtenerEtiquetaDeEstado(estado: EstadoTarea): string {
-  if (estado === "en-progreso") return "En progreso";
-  if (estado === "pendiente")   return "Pendiente";
-  return "Completada";
+function obtenerEtiquetaDeEstado(estado: EstadoTarea): string {
+  const etiquetas: Record<EstadoTarea, string> = {
+    pendiente:   "Pendiente",
+    "en-progreso": "En progreso",
+    completada:  "Completada",
+  };
+  return etiquetas[estado] ?? estado;
 }
 
- function TaskCard({
+function TaskCard({
   datosDeLaTarea,
   alCambiarEstado,
   alActualizarProgreso,
@@ -54,6 +57,24 @@ import "./TaskCard.css";
         {/* Descripción */}
         <p className="task-card__description">{datosDeLaTarea.descripcion}</p>
 
+        {/* Personas — solo se muestra si hay datos */}
+        {(datosDeLaTarea.creadoPor || datosDeLaTarea.asignadoA) && (
+          <div className="task-card__personas">
+            {datosDeLaTarea.creadoPor && (
+              <span className="task-card__persona task-card__persona--creador" title="Creado por">
+                <span className="task-card__persona-icono">✦</span>
+                {datosDeLaTarea.creadoPor}
+              </span>
+            )}
+            {datosDeLaTarea.asignadoA && (
+              <span className="task-card__persona task-card__persona--asignado" title="Asignado a">
+                <span className="task-card__persona-icono">→</span>
+                {datosDeLaTarea.asignadoA}
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Fecha límite */}
         {datosDeLaTarea.fechaLimite && (
           <div className="task-card__date" title="Fecha límite">
@@ -82,43 +103,31 @@ import "./TaskCard.css";
           </small>
 
           <div className="task-card__actions">
-            {/* Completar */}
             <button
               className="task-card__btn task-card__btn--completar"
               onClick={() => alCambiarEstado(datosDeLaTarea.id, "completada")}
               disabled={estaCompletada}
               title="Marcar como completada"
-            >
-              ✓
-            </button>
+            >✓</button>
 
-            
             <button
               className="task-card__btn task-card__btn--progreso"
               onClick={() => alActualizarProgreso(datosDeLaTarea.id, datosDeLaTarea.progreso + 10)}
               disabled={estaCompletada}
-              title="Sumar 10% al progreso"
-            >
-              avance
-            </button>
+              title="+10% de progreso"
+            >Avance</button>
 
-            {/* Editar */}
             <button
               className="task-card__btn task-card__btn--editar"
               onClick={() => setEstaEditando(true)}
               title="Editar tarea"
-            >
-              Editar
-            </button>
+            >Editar</button>
 
-            {/* Eliminar */}
             <button
               className="task-card__btn task-card__btn--eliminar"
               onClick={() => alMoverAPapelera(datosDeLaTarea.id)}
               title="Mover a la papelera"
-            >
-              ✕
-            </button>
+            >✕</button>
           </div>
         </div>
 

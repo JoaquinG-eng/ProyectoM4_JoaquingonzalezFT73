@@ -51,7 +51,8 @@ export function useTasks() {
     localStorage.setItem(CLAVE_ACTIVIDADES, JSON.stringify(actividades));
   }, [actividades]);
 
-  // Timer: +10% cada 30s a tareas en progreso
+  
+  // CAMBIO: interval 5s → 5000ms
   useEffect(() => {
     const intervalo = setInterval(() => {
       setListaDeTareas((anterior) =>

@@ -32,8 +32,8 @@ export function validarTitulo(valor: string): string {
 // Opcional, pero si se completa no puede superar 200 caracteres.
 // ------------------------------------------------------------
 export function validarDescripcion(valor: string): string {
-  if (valor.length > 200) {
-    return "La descripción no puede superar los 200 caracteres.";
+  if (valor.length > 1000) {
+    return "La descripción no puede superar los 1000 caracteres.";
   }
 
   return "";

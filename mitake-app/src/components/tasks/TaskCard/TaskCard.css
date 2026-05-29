@@ -31,12 +31,11 @@
   border-color: var(--color-border-glow);
   box-shadow: 0 10px 24px -5px rgba(0, 0, 0, 0.35);
 }
-
 .task-card:hover::before { opacity: 1; }
 
-.task-card:has(.task-card__priority--alta)::before  { background: var(--color-red); }
+.task-card:has(.task-card__priority--alta)::before  { background: var(--color-red);    }
 .task-card:has(.task-card__priority--media)::before { background: var(--color-orange); }
-.task-card:has(.task-card__priority--baja)::before  { background: var(--color-green); }
+.task-card:has(.task-card__priority--baja)::before  { background: var(--color-green);  }
 
 /* ---- Top ---- */
 .task-card__top {
@@ -70,7 +69,6 @@
   white-space: nowrap;
   flex-shrink: 0;
 }
-
 .task-card__priority--alta  { background: rgba(239,68,68,.15);  color: var(--color-red);    border: 1px solid rgba(239,68,68,.2);  }
 .task-card__priority--media { background: rgba(245,158,11,.15); color: var(--color-orange); border: 1px solid rgba(245,158,11,.2); }
 .task-card__priority--baja  { background: rgba(16,185,129,.15); color: var(--color-green);  border: 1px solid rgba(16,185,129,.2); }
@@ -85,6 +83,48 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ============================================================
+   PERSONAS — creado por + asignado a
+   ============================================================ */
+.task-card__personas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.task-card__persona {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 99px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Creador — violeta suave */
+.task-card__persona--creador {
+  background: rgba(139, 92, 246, 0.1);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+/* Asignado — cyan suave */
+.task-card__persona--asignado {
+  background: rgba(6, 182, 212, 0.1);
+  color: #67e8f9;
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.task-card__persona-icono {
+  font-size: 9px;
+  flex-shrink: 0;
 }
 
 /* ---- Fecha límite ---- */
@@ -110,14 +150,12 @@
   border-radius: 99px;
   overflow: hidden;
 }
-
 .task-card__progress-relleno {
   height: 100%;
   border-radius: 99px;
   background: linear-gradient(90deg, var(--color-purple), #818cf8);
   transition: width 0.4s ease;
 }
-
 .task-card__progress-relleno--completo {
   background: linear-gradient(90deg, #10b981, #34d399);
 }
@@ -141,7 +179,6 @@
   font-weight: 500;
   flex-shrink: 0;
 }
-
 .task-card__status::before {
   content: "";
   display: inline-block;
@@ -149,16 +186,13 @@
   border-radius: 50%;
   flex-shrink: 0;
 }
-
 .task-card__status--pendiente::before  { background: var(--color-blue); }
 .task-card__status--pendiente          { color: var(--color-blue); }
-
 .task-card__status--en-progreso::before {
   background: var(--color-orange);
   animation: pulsarPunto 1.5s ease-in-out infinite;
 }
 .task-card__status--en-progreso { color: var(--color-orange); }
-
 .task-card__status--completada::before { background: var(--color-green); }
 .task-card__status--completada         { color: var(--color-green); }
 
@@ -168,16 +202,15 @@
 }
 
 /* ============================================================
-   BOTONES — clases semánticas, sin nth-child
+   BOTONES — clases semánticas
    ============================================================ */
 .task-card__actions {
   display: flex;
   gap: 5px;
-  flex-wrap: nowrap; /* en desktop no se envuelven */
+  flex-wrap: nowrap;
   align-items: center;
 }
 
-/* Base común */
 .task-card__btn {
   padding: 5px 9px;
   border-radius: var(--radius-xs);
@@ -190,68 +223,43 @@
   border: 1px solid transparent;
   line-height: 1.4;
 }
-
 .task-card__btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
   transform: none !important;
 }
+.task-card__btn:not(:disabled):hover { transform: translateY(-1px); }
 
-.task-card__btn:not(:disabled):hover {
-  transform: translateY(-1px);
-}
-
-/* Completar — violeta */
 .task-card__btn--completar {
-  background: rgba(139, 92, 246, 0.12);
-  color: #a98af9;
-  border-color: rgba(139, 92, 246, 0.2);
+  background: rgba(139,92,246,.12); color: #a98af9; border-color: rgba(139,92,246,.2);
 }
 .task-card__btn--completar:not(:disabled):hover {
-  background: rgba(139, 92, 246, 0.22);
-  color: #c084fc;
-  border-color: rgba(139, 92, 246, 0.35);
+  background: rgba(139,92,246,.22); color: #c084fc; border-color: rgba(139,92,246,.35);
 }
 
-/* +10% — azul */
 .task-card__btn--progreso {
-  background: rgba(59, 130, 246, 0.08);
-  color: rgba(147, 197, 253, 0.85);
-  border-color: rgba(59, 130, 246, 0.15);
+  background: rgba(59,130,246,.08); color: rgba(147,197,253,.85); border-color: rgba(59,130,246,.15);
 }
 .task-card__btn--progreso:not(:disabled):hover {
-  background: rgba(59, 130, 246, 0.16);
-  color: #93c5fd;
-  border-color: rgba(59, 130, 246, 0.28);
+  background: rgba(59,130,246,.16); color: #93c5fd; border-color: rgba(59,130,246,.28);
 }
 
-/* Editar — cyan */
 .task-card__btn--editar {
-  background: rgba(6, 182, 212, 0.08);
-  color: rgba(103, 232, 249, 0.85);
-  border-color: rgba(6, 182, 212, 0.15);
+  background: rgba(6,182,212,.08); color: rgba(103,232,249,.85); border-color: rgba(6,182,212,.15);
 }
 .task-card__btn--editar:hover {
-  background: rgba(6, 182, 212, 0.16);
-  color: #67e8f9;
-  border-color: rgba(6, 182, 212, 0.28);
+  background: rgba(6,182,212,.16); color: #67e8f9; border-color: rgba(6,182,212,.28);
 }
 
-/* Eliminar — rojo, solo ícono para que no ocupe espacio */
 .task-card__btn--eliminar {
-  background: rgba(239, 68, 68, 0.07);
-  color: #f09595;
-  border-color: rgba(239, 68, 68, 0.14);
-  padding: 5px 8px;
+  background: rgba(239,68,68,.07); color: #f09595; border-color: rgba(239,68,68,.14); padding: 5px 8px;
 }
 .task-card__btn--eliminar:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.28);
+  background: rgba(239,68,68,.15); color: #ef4444; border-color: rgba(239,68,68,.28);
 }
 
 /* ============================================================
-   RESPONSIVE — Mobile (≤ 480px)
+   RESPONSIVE
    ============================================================ */
 @media (max-width: 480px) {
   .task-card { padding: 14px 16px; }
@@ -262,16 +270,9 @@
     gap: 10px;
   }
 
-  .task-card__actions {
-    width: 100%;
-    flex-wrap: wrap;
-  }
+  .task-card__actions { width: 100%; flex-wrap: wrap; }
 
-  /* Completar, +10% y Editar se reparten el ancho; ✕ queda al final */
   .task-card__btn--completar,
   .task-card__btn--progreso,
-  .task-card__btn--editar {
-    flex: 1;
-    text-align: center;
-  }
+  .task-card__btn--editar { flex: 1; text-align: center; }
 }

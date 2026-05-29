@@ -45,10 +45,12 @@ function KanbanBoard({
           </p>
         </div>
       </div>
-
-      <div className="kanban__grid">
+        
+        
+        
+      <div className="kanban__grid"> 
         {configuracionDeColumnas.map((columna) => {
-           const tareasDeEstaColumna = tareas
+            const tareasDeEstaColumna = tareas
             .filter((tarea) => tarea.estado === columna.estado)
             .sort((a, b) => ordenDePrioridad[a.prioridad] - ordenDePrioridad[b.prioridad]);
 
