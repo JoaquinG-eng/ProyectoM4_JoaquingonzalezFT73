@@ -36,6 +36,12 @@ export function validarDescripcion(valor: string): string {
     return "La descripción no puede superar los 1000 caracteres.";
   }
 
+  const valorLimpio = valor.trim();
+
+  if (valorLimpio.length < 20) {
+    return "La descripción debe tener al menos 20 caracteres.";
+  }
+
   return "";
 }
 

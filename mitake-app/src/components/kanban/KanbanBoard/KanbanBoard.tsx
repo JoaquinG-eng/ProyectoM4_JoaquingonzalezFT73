@@ -12,7 +12,7 @@ type KanbanBoardProps = {
   alCambiarEstado: (id: string, nuevoEstado: EstadoTarea) => void;
   alActualizarProgreso: (id: string, nuevoProgreso: number) => void;
   alMoverAPapelera: (id: string) => void;
-  alEditarTarea: (id: string, datosEditados: TareaNueva) => void; // ← sin any
+  alEditarTarea: (id: string, datosEditados: TareaNueva) => void; // 
 };
 
 const configuracionDeColumnas: {

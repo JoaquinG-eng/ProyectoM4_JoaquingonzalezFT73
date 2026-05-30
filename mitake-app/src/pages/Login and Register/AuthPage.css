@@ -1,0 +1,470 @@
+/* ============================================================
+   ARCHIVO: src/pages/auth/AuthPage.css
+   Compartido por LoginPage y RegisterPage.
+   ============================================================ */
+
+/* =========================================================
+   LAYOUT: panel izquierdo + formulario derecho
+   ========================================================= */
+.auth-layout {
+  display: flex;
+  min-height: 100dvh;
+  background: #060812;
+}
+
+/* ---- PANEL IZQUIERDO — decorativo, visible desde 768px ---- */
+.auth-layout__panel {
+  display: none; /* oculto en mobile */
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 52px;
+  width: 420px;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #0d1226 0%, #080c1a 60%, #060812 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glow decorativo de fondo */
+.auth-layout__panel::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.auth-layout__panel::after {
+  content: "";
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .auth-layout__panel { display: flex; }
+}
+
+/* Logo */
+.auth-layout__panel-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-layout__logo-icono {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #7c5af6, #5a3dd4);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+  box-shadow: 0 6px 20px rgba(124, 90, 246, 0.35);
+}
+
+.auth-layout__logo-texto {
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Tagline */
+.auth-layout__panel-tagline h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+  margin: 0 0 16px;
+}
+
+.auth-layout__panel-tagline p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Features list (Register) */
+.auth-layout__panel-features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-layout__feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.auth-layout__feature-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Dots decorativos (Login) */
+.auth-layout__panel-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-layout__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+.auth-layout__dot--purple { background: #8b5cf6; }
+.auth-layout__dot--blue   { background: #3b82f6; }
+.auth-layout__dot--green  { background: #10b981; }
+
+/* ---- PANEL DERECHO — formulario ---- */
+.auth-layout__form-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+.auth-form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-form__encabezado {
+  margin-bottom: 4px;
+}
+
+.auth-form__titulo {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 6px;
+  letter-spacing: -0.4px;
+}
+
+.auth-form__subtitulo {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+.auth-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-campo__label-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.auth-campo__etiqueta {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Input con ícono interno */
+.auth-campo__input-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 0 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  gap: 10px;
+}
+
+.auth-campo__input-wrap:focus-within {
+  border-color: var(--color-purple, #8b5cf6);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.auth-campo--error .auth-campo__input-wrap {
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.04);
+}
+.auth-campo--error .auth-campo__input-wrap:focus-within {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.auth-campo__icono {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.auth-campo__input-wrap input {
+  flex: 1;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  min-width: 0;
+}
+
+.auth-campo__input-wrap input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Botón mostrar/ocultar password */
+.auth-campo__toggle-pass {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 6px;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+.auth-campo__toggle-pass:hover { opacity: 1; }
+
+/* Check dentro del campo confirmar */
+.auth-campo__check {
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Link dentro del campo (ej: olvidé contraseña) */
+.auth-campo__link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: rgba(139, 92, 246, 0.8);
+  font-family: inherit;
+  padding: 0;
+  transition: color 0.15s;
+}
+.auth-campo__link:hover { color: #a98af9; }
+
+/* Error de campo */
+.auth-campo__error {
+  font-size: 12px;
+  color: #f09595;
+  margin: 0;
+  padding-left: 2px;
+  animation: errorAparecer 0.2s ease forwards;
+}
+@keyframes errorAparecer {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Indicador de fuerza de contraseña ---- */
+.auth-campo__fuerza {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-campo__fuerza-barras {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.auth-campo__fuerza-barra {
+  flex: 1;
+  height: 3px;
+  border-radius: 99px;
+  transition: background 0.3s;
+}
+
+.auth-campo__fuerza span {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   ERROR GLOBAL DEL FORM
+   ========================================================= */
+.auth-form__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #f09595;
+  animation: errorAparecer 0.2s ease forwards;
+}
+
+/* =========================================================
+   BOTÓN PRIMARIO
+   ========================================================= */
+.auth-form__btn-primario {
+  width: 100%;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c5af6, #5a3dd4);
+  color: #ffffff;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  box-shadow: 0 4px 16px rgba(124, 90, 246, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+.auth-form__btn-primario:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(124, 90, 246, 0.45);
+}
+.auth-form__btn-primario:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spinner de carga */
+.auth-form__spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   SEPARADOR
+   ========================================================= */
+.auth-form__separador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 12px;
+}
+.auth-form__separador::before,
+.auth-form__separador::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* =========================================================
+   BOTÓN GOOGLE
+   ========================================================= */
+.auth-form__btn-google {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.auth-form__btn-google:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* =========================================================
+   FOOTER DEL FORM
+   ========================================================= */
+.auth-form__footer {
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+}
+
+.auth-form__link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #a98af9;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: 600;
+  padding: 0;
+  transition: color 0.15s;
+}
+.auth-form__link:hover { color: #c4b5fd; }
+
+/* =========================================================
+   RESPONSIVE — Mobile full screen
+   ========================================================= */
+@media (max-width: 480px) {
+  .auth-layout__form-wrap {
+    padding: 24px 16px;
+    align-items: flex-start;
+    padding-top: 48px;
+  }
+
+  .auth-form__titulo { font-size: 22px; }
+}
