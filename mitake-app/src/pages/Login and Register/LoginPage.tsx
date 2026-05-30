@@ -1,43 +1,69 @@
 // ============================================================
-// ARCHIVO: src/pages/auth/LoginPage.tsx
-// Por ahora: solo UI. Cuando conectes Firebase reemplazás
-// la función manejarEnvio con authService.login()
+// ARCHIVO: src/pages/Login and Register/LoginPage.tsx
+// Cambios: reemplaza el setError inline por alertaErrorDeAutenticacion
+// y agrega alertaLoginExitoso antes de llamar al callback.
+// Todo lo demás queda exactamente igual.
 // ============================================================
 
 import { useState } from "react";
+
+import {
+  alertaLoginExitoso,
+  alertaErrorDeAutenticacion,
+} from "../../utils/sweetAlerts";
+
 import "./AuthPage.css";
 
 type PropiedadesDeLoginPage = {
-  alIniciarSesion: (email: string) => void;  // callback al dashboard
+  alIniciarSesion: (email: string) => void;
   alIrARegistro: () => void;
 };
 
 function LoginPage({ alIniciarSesion, alIrARegistro }: PropiedadesDeLoginPage) {
-  const [email,      setEmail]      = useState("");
-  const [password,   setPassword]   = useState("");
+  const [email,       setEmail]       = useState("");
+  const [password,    setPassword]    = useState("");
   const [verPassword, setVerPassword] = useState(false);
-  const [cargando,   setCargando]   = useState(false);
-  const [error,      setError]      = useState("");
+  const [cargando,    setCargando]    = useState(false);
+
+  // ── Error eliminado: ahora lo muestra SweetAlert2 ──
 
   async function manejarEnvio(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
 
-    if (!email.trim())    { setError("El email es obligatorio.");      return; }
-    if (!password.trim()) { setError("La contraseña es obligatoria."); return; }
+    // Validaciones locales — ahora van a SweetAlert2
+    if (!email.trim()) {
+      await alertaErrorDeAutenticacion("El email es obligatorio.");
+      return;
+    }
+    if (!password.trim()) {
+      await alertaErrorDeAutenticacion("La contraseña es obligatoria.");
+      return;
+    }
 
     setCargando(true);
-    // ── AQUÍ irá: await authService.login(email, password)
-    // Simulamos un delay de red por ahora
-    await new Promise((r) => setTimeout(r, 800));
-    setCargando(false);
-    alIniciarSesion(email);
+
+    try {
+      // ── AQUÍ irá: await authService.login(email, password)
+      // Simulamos delay de red por ahora
+      await new Promise((r) => setTimeout(r, 800));
+
+      // Popup de bienvenida con SweetAlert2 antes de navegar
+      await alertaLoginExitoso(email);
+
+      alIniciarSesion(email);
+    } catch (_error) {
+      await alertaErrorDeAutenticacion(
+        "No se pudo iniciar sesión. Verificá tus datos."
+      );
+    } finally {
+      setCargando(false);
+    }
   }
 
   return (
     <div className="auth-layout">
 
-      {/* Panel izquierdo — decorativo */}
+      {/* Panel izquierdo — decorativo (sin cambios) */}
       <div className="auth-layout__panel">
         <div className="auth-layout__panel-logo">
           <div className="auth-layout__logo-icono">M</div>
@@ -82,8 +108,12 @@ function LoginPage({ alIniciarSesion, alIrARegistro }: PropiedadesDeLoginPage) {
           {/* Password */}
           <div className="auth-campo">
             <div className="auth-campo__label-fila">
-              <label className="auth-campo__etiqueta" htmlFor="login-password">Contraseña</label>
-              <button type="button" className="auth-campo__link">¿Olvidaste tu contraseña?</button>
+              <label className="auth-campo__etiqueta" htmlFor="login-password">
+                Contraseña
+              </label>
+              <button type="button" className="auth-campo__link">
+                ¿Olvidaste tu contraseña?
+              </button>
             </div>
             <div className="auth-campo__input-wrap">
               <input
@@ -106,12 +136,8 @@ function LoginPage({ alIniciarSesion, alIrARegistro }: PropiedadesDeLoginPage) {
             </div>
           </div>
 
-          {/* Error */}
-          {error && (
-            <div className="auth-form__error" role="alert">
-              <span>⚠</span> {error}
-            </div>
-          )}
+          {/* ── El bloque de error inline fue eliminado
+               Ahora SweetAlert2 muestra los errores en popup ── */}
 
           {/* Submit */}
           <button
@@ -119,11 +145,7 @@ function LoginPage({ alIniciarSesion, alIrARegistro }: PropiedadesDeLoginPage) {
             className={`auth-form__btn-primario ${cargando ? "auth-form__btn-primario--cargando" : ""}`}
             disabled={cargando}
           >
-            {cargando ? (
-              <span className="auth-form__spinner" />
-            ) : (
-              "Ingresar"
-            )}
+            {cargando ? <span className="auth-form__spinner" /> : "Ingresar"}
           </button>
 
           {/* Separador */}
@@ -131,7 +153,7 @@ function LoginPage({ alIniciarSesion, alIrARegistro }: PropiedadesDeLoginPage) {
             <span>o continuá con</span>
           </div>
 
-          {/* Google (placeholder visual) */}
+          {/* Google — placeholder visual */}
           <button type="button" className="auth-form__btn-google">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -145,7 +167,11 @@ function LoginPage({ alIniciarSesion, alIrARegistro }: PropiedadesDeLoginPage) {
           {/* Link a registro */}
           <p className="auth-form__footer">
             ¿No tenés cuenta?{" "}
-            <button type="button" className="auth-form__link" onClick={alIrARegistro}>
+            <button
+              type="button"
+              className="auth-form__link"
+              onClick={alIrARegistro}
+            >
               Registrate gratis
             </button>
           </p>

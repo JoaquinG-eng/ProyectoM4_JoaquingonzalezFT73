@@ -1,16 +1,17 @@
 // ============================================================
 // ARCHIVO: src/pages/papelera/PapeleraPage.tsx
-// ¿Para qué sirve? Página de la papelera de reciclaje.
-// Muestra las tareas eliminadas con opciones de restaurar
-// o borrar permanentemente.
+// Cambios: los botones de eliminar y vaciar ahora piden
+// confirmación con SweetAlert2 antes de ejecutar la acción.
 // ============================================================
+
+import {
+  confirmarEliminarPermanentemente,
+  confirmarVaciarPapelera,
+} from "../../utils/sweetAlerts";
 
 import type { Tarea } from "../../types/task";
 import "./PapeleraPage.css";
 
-// ------------------------------------------------------------
-// INTERFAZ: PropiedadesDePapeleraPage
-// ------------------------------------------------------------
 interface PropiedadesDePapeleraPage {
   tareasEnPapelera: Tarea[];
   alRestaurar: (identificador: string) => void;
@@ -22,19 +23,44 @@ const textosPorPrioridad: Record<string, string> = {
   baja: "Baja", media: "Media", alta: "Alta",
 };
 
-// ------------------------------------------------------------
-// COMPONENTE: PapeleraPage
-// ------------------------------------------------------------
 function PapeleraPage({
   tareasEnPapelera,
   alRestaurar,
   alEliminarPermanentemente,
   alVaciarPapelera,
 }: PropiedadesDePapeleraPage) {
+
+  // --------------------------------------------------------
+  // FUNCIÓN: manejarEliminarPermanentemente
+  // Pide confirmación con Swal antes de borrar.
+  // --------------------------------------------------------
+  async function manejarEliminarPermanentemente(
+    tareaAEliminar: Tarea
+  ): Promise<void> {
+    const usuarioConfirmo = await confirmarEliminarPermanentemente(
+      tareaAEliminar.titulo
+    );
+    if (usuarioConfirmo) {
+      alEliminarPermanentemente(tareaAEliminar.id);
+    }
+  }
+
+  // --------------------------------------------------------
+  // FUNCIÓN: manejarVaciarPapelera
+  // Pide confirmación con Swal antes de vaciar todo.
+  // --------------------------------------------------------
+  async function manejarVaciarPapelera(): Promise<void> {
+    const usuarioConfirmo = await confirmarVaciarPapelera(
+      tareasEnPapelera.length
+    );
+    if (usuarioConfirmo) {
+      alVaciarPapelera();
+    }
+  }
+
   return (
     <div className="papelera">
 
-      {/* Encabezado */}
       <div className="papelera__encabezado">
         <div className="papelera__encabezado-texto">
           <h2 className="papelera__titulo">Papelera de reciclaje</h2>
@@ -47,32 +73,28 @@ function PapeleraPage({
         {tareasEnPapelera.length > 0 && (
           <button
             className="papelera__boton-vaciar"
-            onClick={alVaciarPapelera}
+            onClick={manejarVaciarPapelera}
           >
             🗑 Vaciar papelera
           </button>
         )}
       </div>
 
-      {/* Estado vacío */}
       {tareasEnPapelera.length === 0 && (
         <div className="papelera__vacia">
           <div className="papelera__vacia-icono">🗑</div>
           <p className="papelera__vacia-texto">No hay elementos en la papelera</p>
           <p className="papelera__vacia-descripcion">
-            Las tareas eliminadas aparecerán acá. Podés restaurarlas o borrarlas
-            definitivamente.
+            Las tareas eliminadas aparecerán acá. Podés restaurarlas o borrarlas definitivamente.
           </p>
         </div>
       )}
 
-      {/* Lista de tareas eliminadas */}
       {tareasEnPapelera.length > 0 && (
         <div className="papelera__lista">
           {tareasEnPapelera.map((tareaEliminada) => (
             <div key={tareaEliminada.id} className="papelera__item">
 
-              {/* Info de la tarea */}
               <div className="papelera__item-info">
                 <div className="papelera__item-encabezado">
                   <span className={`papelera__item-prioridad papelera__item-prioridad--${tareaEliminada.prioridad}`}>
@@ -92,19 +114,16 @@ function PapeleraPage({
                 )}
               </div>
 
-              {/* Acciones */}
               <div className="papelera__item-acciones">
                 <button
                   className="papelera__boton-restaurar"
                   onClick={() => alRestaurar(tareaEliminada.id)}
-                  title="Restaurar tarea"
                 >
                   ↩ Restaurar
                 </button>
                 <button
                   className="papelera__boton-eliminar"
-                  onClick={() => alEliminarPermanentemente(tareaEliminada.id)}
-                  title="Eliminar para siempre"
+                  onClick={() => manejarEliminarPermanentemente(tareaEliminada)}
                 >
                   ✕ Eliminar
                 </button>
@@ -114,6 +133,7 @@ function PapeleraPage({
           ))}
         </div>
       )}
+
     </div>
   );
 }
