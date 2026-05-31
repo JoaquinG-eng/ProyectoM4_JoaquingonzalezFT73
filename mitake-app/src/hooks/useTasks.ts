@@ -1,28 +1,11 @@
-// ============================================================
-// ARCHIVO: src/hooks/useTasks.ts
-// ============================================================
+ import { useState, useEffect } from "react";
+ import type { Tarea, TareaNueva, EstadoTarea } from "../types/task";
+ import type { Actividad, TipoActividad } from "../types/actividad";
 
-import { useState, useEffect } from "react";
-import type { Tarea, TareaNueva, EstadoTarea } from "../types/task";
-import type { Actividad, TipoActividad } from "../types/actividad";
+const MAX_ACTIVIDADES = 30;
 
-const CLAVE_TAREAS      = "mitake-tareas";
-const CLAVE_ACTIVIDADES = "mitake-actividades";
-const MAX_ACTIVIDADES   = 30;
-
-function cargarTareasDesdeStorage(): Tarea[] {
-  try {
-    const datos = localStorage.getItem(CLAVE_TAREAS);
-    return datos ? (JSON.parse(datos) as Tarea[]) : [];
-  } catch { return []; }
-}
-
-function cargarActividadesDesdeStorage(): Actividad[] {
-  try {
-    const datos = localStorage.getItem(CLAVE_ACTIVIDADES);
-    return datos ? (JSON.parse(datos) as Actividad[]) : [];
-  } catch { return []; }
-}
+function claveTablas(uid: string)      { return `mitake-tareas-${uid}`; }
+function claveActividades(uid: string) { return `mitake-actividades-${uid}`; }
 
 function generarId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -32,17 +15,36 @@ function horaActual(): string {
   return new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
 }
 
-export function useTasks() {
-  const [listaDeTareas, setListaDeTareas] = useState<Tarea[]>(cargarTareasDesdeStorage);
-  const [actividades,   setActividades]   = useState<Actividad[]>(cargarActividadesDesdeStorage);
+// ── El hook ahora recibe el uid del usuario ──
+export function useTasks(identificadorDelUsuario: string) {
+
+  const [listaDeTareas, setListaDeTareas] = useState<Tarea[]>(() => {
+    try {
+      const datos = localStorage.getItem(claveTablas(identificadorDelUsuario));
+      return datos ? (JSON.parse(datos) as Tarea[]) : [];
+    } catch { return []; }
+  });
+
+  const [actividades, setActividades] = useState<Actividad[]>(() => {
+    try {
+      const datos = localStorage.getItem(claveActividades(identificadorDelUsuario));
+      return datos ? (JSON.parse(datos) as Actividad[]) : [];
+    } catch { return []; }
+  });
 
   useEffect(() => {
-    localStorage.setItem(CLAVE_TAREAS, JSON.stringify(listaDeTareas));
-  }, [listaDeTareas]);
+    localStorage.setItem(
+      claveTablas(identificadorDelUsuario),
+      JSON.stringify(listaDeTareas)
+    );
+  }, [listaDeTareas, identificadorDelUsuario]);
 
   useEffect(() => {
-    localStorage.setItem(CLAVE_ACTIVIDADES, JSON.stringify(actividades));
-  }, [actividades]);
+    localStorage.setItem(
+      claveActividades(identificadorDelUsuario),
+      JSON.stringify(actividades)
+    );
+  }, [actividades, identificadorDelUsuario]);
 
   // Timer: +10% cada 5s a tareas en progreso
   useEffect(() => {
@@ -59,7 +61,7 @@ export function useTasks() {
     return () => clearInterval(intervalo);
   }, []);
 
-  function registrarActividad(tipo: TipoActividad, descripcion: string): void {
+  async function registrarActividad(tipo: TipoActividad, descripcion: string): Promise<void> {
     const nueva: Actividad = { id: generarId(), tipo, descripcion, hora: horaActual() };
     setActividades((ant) => [nueva, ...ant].slice(0, MAX_ACTIVIDADES));
   }
@@ -67,30 +69,24 @@ export function useTasks() {
   const tareasActivas    = listaDeTareas.filter((t) => !t.estaEnPapelera);
   const tareasEnPapelera = listaDeTareas.filter((t) =>  t.estaEnPapelera);
 
-  // --------------------------------------------------------
-  // CREAR — incluye creadoPor y asignadoA
-  // --------------------------------------------------------
   function crearTarea(datosNuevos: TareaNueva): void {
     const tarea: Tarea = {
-      id:           `tarea-${generarId()}`,
-      titulo:       datosNuevos.titulo,
-      descripcion:  datosNuevos.descripcion,
-      estado:       datosNuevos.estado,
-      prioridad:    datosNuevos.prioridad,
-      fechaCreacion: new Date().toLocaleDateString("es-AR"),
-      fechaLimite:  datosNuevos.fechaLimite,
-      progreso:     datosNuevos.estado === "completada" ? 100 : 0,
+      id:             `tarea-${generarId()}`,
+      titulo:         datosNuevos.titulo,
+      descripcion:    datosNuevos.descripcion,
+      estado:         datosNuevos.estado,
+      prioridad:      datosNuevos.prioridad,
+      fechaCreacion:  new Date().toLocaleDateString("es-AR"),
+      fechaLimite:    datosNuevos.fechaLimite,
+      progreso:       datosNuevos.estado === "completada" ? 100 : 0,
       estaEnPapelera: false,
-      creadoPor:    datosNuevos.creadoPor,
-      asignadoA:    datosNuevos.asignadoA,
+      creadoPor:      datosNuevos.creadoPor,
+      asignadoA:      datosNuevos.asignadoA,
     };
     setListaDeTareas((ant) => [tarea, ...ant]);
     registrarActividad("tarea_creada", `Creaste "${tarea.titulo}"`);
   }
 
-  // --------------------------------------------------------
-  // EDITAR — incluye creadoPor y asignadoA
-  // --------------------------------------------------------
   function editarTarea(identificador: string, datosEditados: TareaNueva): void {
     setListaDeTareas((ant) =>
       ant.map((tarea) => {
@@ -109,9 +105,6 @@ export function useTasks() {
     registrarActividad("tarea_editada", `Editaste "${datosEditados.titulo}"`);
   }
 
-  // --------------------------------------------------------
-  // CAMBIAR ESTADO
-  // --------------------------------------------------------
   function cambiarEstadoTarea(identificador: string, nuevoEstado: EstadoTarea): void {
     setListaDeTareas((ant) =>
       ant.map((tarea) => {
@@ -130,9 +123,6 @@ export function useTasks() {
     if (nuevoEstado === "pendiente")   registrarActividad("tarea_pendiente",   `${nombre} volvió a pendiente`);
   }
 
-  // --------------------------------------------------------
-  // PROGRESO
-  // --------------------------------------------------------
   function actualizarProgreso(identificador: string, porcentajeNuevo: number): void {
     setListaDeTareas((ant) =>
       ant.map((tarea) => {
@@ -144,14 +134,11 @@ export function useTasks() {
       })
     );
     if (porcentajeNuevo >= 100) {
-      const tarea  = listaDeTareas.find((t) => t.id === identificador);
+      const tarea = listaDeTareas.find((t) => t.id === identificador);
       registrarActividad("tarea_completada", `"${tarea?.titulo ?? "Tarea"}" llegó al 100%`);
     }
   }
 
-  // --------------------------------------------------------
-  // PAPELERA
-  // --------------------------------------------------------
   function moverAPapelera(identificador: string): void {
     const tarea = listaDeTareas.find((t) => t.id === identificador);
     setListaDeTareas((ant) =>

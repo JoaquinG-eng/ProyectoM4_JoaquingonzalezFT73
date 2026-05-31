@@ -1,64 +1,65 @@
-// ============================================================
-// ARCHIVO: src/App.tsx
-//
-// Manejo de rutas con estado local mientras no hay Firebase.
-// Cuando conectes Firebase:
-//   1. Reemplazá `usuarioActual` con el hook useAuth()
-//   2. Reemplazá las funciones de callback con authService
-//   3. El ProtectedRoute ya está preparado en src/routes/
-// ============================================================
+ import { useState } from "react";
+ import { AlertProvider } from "./context/AlertContext";
 
-import { useState } from "react";
-import { AlertProvider } from "./context/AlertContext";
+ import { useAuth } from "./hooks/useAuth";
+ import { cerrarSesionDelUsuario } from "./services/authService";
 
-import LoginPage    from "./pages/Login and Register/LoginPage";
-import RegisterPage from "./pages/Login and Register/RegisterPage";
-import DashboardPage from "./pages/dashboard/DashboardPage";
+ import LoginPage from "./pages/Login and Register/LoginPage";
+ import RegisterPage  from "./pages/Login and Register/RegisterPage";
+ import DashboardPage from "./pages/dashboard/DashboardPage";
 
-// Tres pantallas posibles
-type Vista = "login" | "registro" | "dashboard";
+ function App() {
+  const { usuarioActual, estaVerificandoSesion } = useAuth();
+  const [vistaDeAuth, setVistaDeAuth] = useState<"login" | "registro">("login");
 
-function App() {
-  const [vista,          setVista]          = useState<Vista>("login");
-  const [usuarioActual,  setUsuarioActual]  = useState<string | null>(null);
-
-  function manejarLogin(email: string) {
-    setUsuarioActual(email);
-    setVista("dashboard");
+  if (estaVerificandoSesion) {
+    return (
+      <div style={{
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        height: "100vh", backgroundColor: "#13111a",
+        color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif",
+        gap: "16px",
+      }}>
+        <div style={{
+          width: "36px", height: "36px",
+          border: "3px solid rgba(124,90,246,0.3)",
+          borderTop: "3px solid #7c5af6",
+          borderRadius: "50%",
+          animation: "spin 0.8s linear infinite",
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <p style={{ margin: 0, fontSize: "14px" }}>Cargando...</p>
+      </div>
+    );
   }
 
-  function manejarRegistro(email: string) {
-    setUsuarioActual(email);
-    setVista("dashboard");
+  if (!usuarioActual) {
+    return (
+      <AlertProvider>
+        {vistaDeAuth === "login" ? (
+          <LoginPage
+            alIniciarSesion={() => {}}
+            alIrARegistro={() => setVistaDeAuth("registro")}
+          />
+        ) : (
+          <RegisterPage
+            alRegistrarse={() => {}}
+            alIrALogin={() => setVistaDeAuth("login")}
+          />
+        )}
+      </AlertProvider>
+    );
   }
 
-  function manejarLogout() {
-    setUsuarioActual(null);
-    setVista("login");
-  }
 
-  return (
-    <AlertProvider>
-      {vista === "login" && (
-        <LoginPage
-          alIniciarSesion={manejarLogin}
-          alIrARegistro={() => setVista("registro")}
-        />
-      )}
-
-      {vista === "registro" && (
-        <RegisterPage
-          alRegistrarse={manejarRegistro}
-          alIrALogin={() => setVista("login")}
-        />
-      )}
-
-      {vista === "dashboard" && usuarioActual && (
-        // TODO: pasar alLogout al Sidebar/Topbar cuando conectes Firebase
-        <DashboardPage />
-      )}
-    </AlertProvider>
-  );
+return (
+  <AlertProvider>
+    <DashboardPage
+      alLogout={cerrarSesionDelUsuario}
+      uid={usuarioActual.uid}  
+    />
+  </AlertProvider>
+);
 }
-
 export default App;

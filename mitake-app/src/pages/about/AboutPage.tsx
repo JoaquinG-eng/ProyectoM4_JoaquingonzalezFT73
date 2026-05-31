@@ -1,10 +1,4 @@
-// ============================================================
-// ARCHIVO: src/pages/about/AboutPage.tsx
-// ¿Para qué sirve? Página "Sobre Mitake" con información
-// del proyecto, el stack tecnológico y las funcionalidades.
-// ============================================================
-
-import "./AboutPage.css";
+ import "./AboutPage.css";
 
 // ------------------------------------------------------------
 // DATOS DEL STACK TECNOLÓGICO

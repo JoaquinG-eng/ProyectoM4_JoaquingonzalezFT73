@@ -1,7 +1,4 @@
-// ============================================================
-// ARCHIVO: src/components/layout/Sidebar/Sidebar.tsx
-// ============================================================
-
+import { alertaCierreDeSesion } from "../../../utils/sweetAlerts";
 import "./Sidebar.css";
 
 interface ElementoDeNavegacion {
@@ -16,12 +13,13 @@ interface PropiedadesDeSidebar {
   cantidadEnPapelera: number;
   estaAbierto: boolean;
   alCerrar: () => void;
+  alCerrarSesion: () => void | Promise<void>; // ← NUEVO
 }
 
 const elementosDeNavegacion: ElementoDeNavegacion[] = [
-  { id: "dashboard",  etiqueta: "Dashboard",    icono: "▦" },
-  { id: "mis-tareas", etiqueta: "Mis tareas",   icono: "✓" },
-  { id: "tickets",    etiqueta: "Tickets",       icono: "◈" },
+  { id: "dashboard",  etiqueta: "Dashboard",  icono: "▦" },
+  { id: "mis-tareas", etiqueta: "Mis tareas", icono: "✓" },
+  { id: "tickets",    etiqueta: "Tickets",    icono: "◈" },
 ];
 
 function Sidebar({
@@ -30,17 +28,25 @@ function Sidebar({
   cantidadEnPapelera,
   estaAbierto,
   alCerrar,
+  alCerrarSesion, // ← NUEVO
 }: PropiedadesDeSidebar) {
 
   function manejarClick(id: string) {
     alCambiarSeccion(id);
-    alCerrar(); // en móvil cierra el sidebar al navegar
+    alCerrar();
+  }
+
+  // ── NUEVA función con confirmación SweetAlert2 ──
+  async function manejarCierreDeSesion(): Promise<void> {
+    const usuarioConfirmo = await alertaCierreDeSesion();
+    if (usuarioConfirmo) {
+      await alCerrarSesion();
+    }
   }
 
   return (
     <>
-      {/* Overlay oscuro — solo visible en móvil cuando el sidebar está abierto */}
-      {estaAbierto && (
+       {estaAbierto && (
         <div
           className="sidebar__overlay"
           onClick={alCerrar}
@@ -54,8 +60,7 @@ function Sidebar({
         <div className="sidebar__logo">
           <div className="sidebar__logo-icono">M</div>
           <span className="sidebar__logo-texto">Mitake</span>
-          {/* Botón cerrar — solo visible en móvil */}
-          <button
+           <button
             className="sidebar__boton-cerrar"
             onClick={alCerrar}
             aria-label="Cerrar menú"
@@ -109,7 +114,7 @@ function Sidebar({
           </button>
         </div>
 
-        {/* Usuario */}
+        {/* Usuario + logout */}
         <div className="sidebar__pie">
           <div className="sidebar__usuario">
             <div className="sidebar__usuario-avatar">U</div>
@@ -118,6 +123,16 @@ function Sidebar({
               <span className="sidebar__usuario-rol">Desarrollador</span>
             </div>
           </div>
+
+          {/* ── NUEVO: botón cerrar sesión ── */}
+          <button
+            className="sidebar__boton-logout"
+            onClick={manejarCierreDeSesion}
+            title="Cerrar sesión"
+          >
+            <span className="sidebar__item-icono">⇥</span>
+            <span>Cerrar sesión</span>
+          </button>
         </div>
 
       </aside>

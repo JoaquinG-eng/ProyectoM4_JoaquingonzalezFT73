@@ -1,5 +1,4 @@
-// ============================================================
-// ARCHIVO: src/utils/validaciones.ts
+ // ============================================================
 // ¿Para qué sirve? Funciones puras de validación reutilizables
 // en cualquier formulario de la app. Cada función recibe un
 // valor y devuelve el mensaje de error, o string vacío si es válido.

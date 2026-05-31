@@ -1,11 +1,4 @@
-// ============================================================
-// ARCHIVO: src/components/layout/Topbar/Topbar.tsx
-// ¿Para qué sirve? Barra superior del dashboard.
-// Ahora acepta botones de acción opcionales que se renderizan
-// en el lado derecho junto al avatar.
-// ============================================================
-
-import "./Topbar.css";
+ import "./Topbar.css";
 
 // ------------------------------------------------------------
 // INTERFAZ: ConfiguracionDeBoton
@@ -25,7 +18,7 @@ interface PropiedadesDeTopbar {
   nombreDelUsuario?: string;
   alAbrirSidebar?: () => void;
   botonPrimario?: ConfiguracionDeBoton;    // Botón violeta (ej: "Nueva tarea")
-  botonSecundario?: ConfiguracionDeBoton;  // Botón secundario (ej: "Nuevo ticket")
+  botonSecundario?: ConfiguracionDeBoton;  // Botón secundario (ej: "Nuevo ticket" futuramente)
 }
 
 // ------------------------------------------------------------

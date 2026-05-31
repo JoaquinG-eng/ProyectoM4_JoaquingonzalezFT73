@@ -1,8 +1,4 @@
-/* ============================================================
-   ARCHIVO: src/components/tasks/TaskCard/TaskCard.css
-   ============================================================ */
-
-.task-card {
+ .task-card {
   background: var(--color-card);
   border-radius: var(--radius-sm);
   padding: 18px 20px;

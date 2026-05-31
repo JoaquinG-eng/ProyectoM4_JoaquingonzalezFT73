@@ -1,11 +1,6 @@
-// ============================================================
-// ARCHIVO: src/components/kanban/KanbanBoard/KanbanBoard.tsx
-// CAMBIO: reemplaza `any` por el tipo correcto TareaNueva
-// ============================================================
-
-import TaskCard from "../../tasks/TaskCard/TaskCard";
-import type { EstadoTarea, Tarea, TareaNueva } from "../../../types/task";
-import "./KanbanBoard.css";
+ import TaskCard from "../../tasks/TaskCard/TaskCard";
+ import type { EstadoTarea, Tarea, TareaNueva } from "../../../types/task";
+ import "./KanbanBoard.css";
 
 type KanbanBoardProps = {
   tareas: Tarea[];

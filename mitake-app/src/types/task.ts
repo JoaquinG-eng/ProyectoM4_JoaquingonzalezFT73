@@ -1,5 +1,4 @@
 // ============================================================
-// ARCHIVO: src/types/task.ts
 // ¿Para qué sirve? Define todos los tipos de datos del proyecto.
 // Agregamos: asignadoA, creadoPor y FiltrosDeBusqueda.
 // ============================================================

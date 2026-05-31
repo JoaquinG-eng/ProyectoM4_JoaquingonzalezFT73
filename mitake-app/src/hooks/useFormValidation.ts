@@ -1,5 +1,4 @@
 // ============================================================
-// ARCHIVO: src/hooks/useFormValidation.ts
 // ¿Para qué sirve? Hook genérico de validación de formularios.
 // Maneja el estado de errores y de "tocado" (touched) por campo.
 // Un campo "tocado" es uno que el usuario ya visitó (blur).

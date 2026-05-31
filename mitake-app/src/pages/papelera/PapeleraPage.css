@@ -1,8 +1,4 @@
-/* ============================================================
-   ARCHIVO: src/pages/papelera/PapeleraPage.css
-   ============================================================ */
-
-.papelera {
+ .papelera {
   display: flex;
   flex-direction: column;
   gap: 24px;

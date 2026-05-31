@@ -1,7 +1,3 @@
-// ============================================================
-// ARCHIVO: src/pages/dashboard/DashboardPage.tsx
-// ============================================================
-
 import { useState } from "react";
 
 import { useTasks } from "../../hooks/useTasks";
@@ -24,7 +20,13 @@ import "./DashboardPage.css";
 
 type SeccionActiva = "dashboard" | "mis-tareas" | "tickets" | "papelera" | "about";
 
-export default function DashboardPage() {
+interface PropiedadesDeDashboardPage {
+  alLogout: () => void | Promise<void>;
+  uid: string;
+}
+
+export default function DashboardPage({ alLogout, uid }: PropiedadesDeDashboardPage) {
+
   const { alertaExito, alertaInfo, alertaAdvertencia, alertaError } = useAlert();
   const {
     tareasActivas,
@@ -38,16 +40,13 @@ export default function DashboardPage() {
     restaurarDePapelera,
     eliminarPermanentemente,
     vaciarPapelera,
-  } = useTasks();
+  } = useTasks(uid);
 
   const [seccionActiva,     setSeccionActiva]     = useState<SeccionActiva>("dashboard");
   const [sidebarAbierto,    setSidebarAbierto]    = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [filtros,           setFiltros]           = useState<FiltrosDeBusqueda>(FILTROS_VACIOS);
 
-  // Usamos el tipo FiltrosDeBusqueda completo desde task.ts
-  const [filtros, setFiltros] = useState<FiltrosDeBusqueda>(FILTROS_VACIOS);
-
-  // ---- Helpers de filtro ----
   function actualizarFiltro<K extends keyof FiltrosDeBusqueda>(
     campo: K,
     valor: FiltrosDeBusqueda[K]
@@ -64,14 +63,12 @@ export default function DashboardPage() {
     filtros.estadoFiltrado  !== "todas" ||
     filtros.asignadoA       !== "";
 
-  // ---- Lógica de filtrado ----
-  // Buscamos en: título, descripción, creadoPor Y asignadoA
   const tareasFiltradas = tareasActivas.filter((tarea) => {
     const texto = filtros.textoDeBusqueda.toLowerCase();
 
     const coincideTexto =
       texto === "" ||
-      tarea.titulo.toLowerCase().includes(texto)           ||
+      tarea.titulo.toLowerCase().includes(texto)              ||
       (tarea.descripcion ?? "").toLowerCase().includes(texto) ||
       (tarea.creadoPor   ?? "").toLowerCase().includes(texto) ||
       (tarea.asignadoA   ?? "").toLowerCase().includes(texto);
@@ -87,7 +84,6 @@ export default function DashboardPage() {
     return coincideTexto && coincideEstado && coincideAsignado;
   });
 
-  // ---- Handlers ----
   function manejarCreacionDeTarea(datos: TareaNueva) {
     crearTarea(datos);
     alertaExito(`"${datos.titulo}" fue agregada.`, "Tarea creada");
@@ -129,13 +125,11 @@ export default function DashboardPage() {
     alertaError("Papelera vaciada.", "Vaciada");
   }
 
-  // ---- Estadísticas ----
   const totalTareas       = tareasActivas.length;
   const tareasCompletadas = tareasActivas.filter((t) => t.estado === "completada").length;
   const tareasEnProgreso  = tareasActivas.filter((t) => t.estado === "en-progreso").length;
   const tareasPendientes  = tareasActivas.filter((t) => t.estado === "pendiente").length;
 
-  // ---- Config topbar ----
   const configTopbar: Record<SeccionActiva, { titulo: string; subtitulo: string }> = {
     dashboard:    { titulo: "Dashboard",    subtitulo: `${totalTareas} tarea${totalTareas !== 1 ? "s" : ""} en total` },
     "mis-tareas": { titulo: "Mis tareas",   subtitulo: hayFiltrosActivos ? `${tareasFiltradas.length} resultado${tareasFiltradas.length !== 1 ? "s" : ""}` : `${tareasPendientes} pendiente${tareasPendientes !== 1 ? "s" : ""}` },
@@ -155,6 +149,7 @@ export default function DashboardPage() {
         cantidadEnPapelera={tareasEnPapelera.length}
         estaAbierto={sidebarAbierto}
         alCerrar={() => setSidebarAbierto(false)}
+        alCerrarSesion={alLogout}
       />
 
       <main className="dashboard-layout__main">
@@ -170,9 +165,6 @@ export default function DashboardPage() {
           }
         />
 
-        {/* ================================================
-            DASHBOARD
-        ================================================ */}
         {seccionActiva === "dashboard" && (
           <div className="dashboard-layout__contenido">
             <div className="dashboard-layout__estadisticas">
@@ -199,16 +191,9 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ================================================
-            MIS TAREAS — con buscador completo
-        ================================================ */}
         {seccionActiva === "mis-tareas" && (
           <div className="dashboard-layout__contenido">
-
-            {/* BARRA DE FILTROS */}
             <div className="filtros-barra">
-
-              {/* Búsqueda general: título, descripción, creador, asignado */}
               <div className="filtros-barra__campo filtros-barra__campo--busqueda">
                 <span className="filtros-barra__campo-icono">⌕</span>
                 <input
@@ -222,12 +207,10 @@ export default function DashboardPage() {
                   <button
                     className="filtros-barra__limpiar-input"
                     onClick={() => actualizarFiltro("textoDeBusqueda", "")}
-                    title="Limpiar búsqueda"
                   >✕</button>
                 )}
               </div>
 
-              {/* Filtro por asignado específico */}
               <div className="filtros-barra__campo">
                 <span className="filtros-barra__campo-icono">→</span>
                 <input
@@ -239,7 +222,6 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* Filtro por estado */}
               <div className="filtros-barra__botones">
                 {(["todas", "pendiente", "en-progreso", "completada"] as const).map((estadoOpcion) => (
                   <button
@@ -254,7 +236,6 @@ export default function DashboardPage() {
                 ))}
               </div>
 
-              {/* Botón limpiar — solo si hay filtros activos */}
               {hayFiltrosActivos && (
                 <button className="filtros-barra__limpiar-todo" onClick={limpiarFiltros}>
                   Limpiar filtros
@@ -262,7 +243,6 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* Resultado del filtro */}
             {hayFiltrosActivos && (
               <p className="filtros-barra__resultado">
                 {tareasFiltradas.length === 0
@@ -281,7 +261,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* TICKETS */}
         {seccionActiva === "tickets" && (
           <div className="dashboard-layout__contenido">
             <div className="dashboard-layout__proximamente">
@@ -292,7 +271,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* PAPELERA */}
         {seccionActiva === "papelera" && (
           <div className="dashboard-layout__contenido">
             <PapeleraPage
@@ -304,7 +282,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ABOUT */}
         {seccionActiva === "about" && (
           <div className="dashboard-layout__contenido">
             <AboutPage />

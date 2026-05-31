@@ -1,12 +1,6 @@
-// ============================================================
-// ARCHIVO: src/components/ui/ActivityFeed/ActivityFeed.tsx
-// ¿Para qué sirve? Muestra el historial de acciones recientes
-// del usuario en el dashboard.
-// ============================================================
-
-import type { Actividad } from "../../../types/actividad";
-import { CONFIG_ACTIVIDAD } from "../../../types/actividad";
-import "./ActivityFeed.css";
+ import type { Actividad } from "../../../types/actividad";
+ import { CONFIG_ACTIVIDAD } from "../../../types/actividad";
+ import "./ActivityFeed.css";
 
 interface ActivityFeedProps {
   actividades: Actividad[];

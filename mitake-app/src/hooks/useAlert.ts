@@ -1,5 +1,4 @@
 // ============================================================
-// ARCHIVO: src/hooks/useAlert.ts
 // ¿Para qué sirve? Hook personalizado para usar el sistema
 // de alertas desde cualquier componente. También expone
 // atajos para cada tipo de alerta (exito, error, etc.)

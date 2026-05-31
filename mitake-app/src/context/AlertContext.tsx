@@ -1,5 +1,4 @@
 // ============================================================
-// ARCHIVO: src/context/AlertContext.tsx
 // ¿Para qué sirve? Define el contexto global de alertas.
 // Cualquier componente de la app puede disparar una alerta
 // sin necesidad de pasar props hacia arriba o abajo.

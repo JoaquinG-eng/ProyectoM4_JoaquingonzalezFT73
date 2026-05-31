@@ -1,8 +1,4 @@
-// ============================================================
-// ARCHIVO: src/types/actividad.ts
-// ============================================================
-
-export type TipoActividad =
+ export type TipoActividad =
   | "tarea_creada"
   | "tarea_editada"
   | "tarea_completada"

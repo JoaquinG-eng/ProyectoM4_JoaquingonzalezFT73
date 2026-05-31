@@ -1,11 +1,7 @@
-// ============================================================
-// ARCHIVO: src/components/tasks/TaskCard/TaskCard.tsx
-// ============================================================
-
-import { useState } from "react";
-import type { EstadoTarea, Tarea, TareaNueva } from "../../../types/task";
-import TaskForm from "../TaskForm/TaskForm";
-import "./TaskCard.css";
+ import { useState } from "react";
+ import type { EstadoTarea, Tarea, TareaNueva } from "../../../types/task";
+ import TaskForm from "../TaskForm/TaskForm";
+ import "./TaskCard.css";
 
 type TaskCardProps = {
   datosDeLaTarea: Tarea;

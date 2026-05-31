@@ -1,13 +1,4 @@
-// ============================================================
-// ARCHIVO: src/pages/papelera/PapeleraPage.tsx
-// Cambios: los botones de eliminar y vaciar ahora piden
-// confirmación con SweetAlert2 antes de ejecutar la acción.
-// ============================================================
-
-import {
-  confirmarEliminarPermanentemente,
-  confirmarVaciarPapelera,
-} from "../../utils/sweetAlerts";
+import { confirmarEliminarPermanentemente, confirmarVaciarPapelera,} from "../../utils/sweetAlerts";
 
 import type { Tarea } from "../../types/task";
 import "./PapeleraPage.css";
@@ -30,11 +21,7 @@ function PapeleraPage({
   alVaciarPapelera,
 }: PropiedadesDePapeleraPage) {
 
-  // --------------------------------------------------------
-  // FUNCIÓN: manejarEliminarPermanentemente
-  // Pide confirmación con Swal antes de borrar.
-  // --------------------------------------------------------
-  async function manejarEliminarPermanentemente(
+   async function manejarEliminarPermanentemente(
     tareaAEliminar: Tarea
   ): Promise<void> {
     const usuarioConfirmo = await confirmarEliminarPermanentemente(
@@ -45,11 +32,7 @@ function PapeleraPage({
     }
   }
 
-  // --------------------------------------------------------
-  // FUNCIÓN: manejarVaciarPapelera
-  // Pide confirmación con Swal antes de vaciar todo.
-  // --------------------------------------------------------
-  async function manejarVaciarPapelera(): Promise<void> {
+   async function manejarVaciarPapelera(): Promise<void> {
     const usuarioConfirmo = await confirmarVaciarPapelera(
       tareasEnPapelera.length
     );

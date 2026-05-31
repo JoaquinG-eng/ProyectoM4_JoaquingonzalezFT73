@@ -1,8 +1,4 @@
-/* ============================================================
-   ARCHIVO: src/components/ui/ActivityFeed/ActivityFeed.css
-   ============================================================ */
-
-.activity-feed {
+ .activity-feed {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: var(--radius-sm);

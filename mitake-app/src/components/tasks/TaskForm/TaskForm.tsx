@@ -1,13 +1,9 @@
-// ============================================================
- // ARCHIVO: src/components/tasks/TaskForm/TaskForm.tsx
-// ============================================================
-
-import { useState } from "react";
-import type { PrioridadTarea, TareaNueva } from "../../../types/task";
-import { useFormValidation } from "../../../hooks/useFormValidation";
-import { useAlert }          from "../../../hooks/useAlert";
-import { validarTitulo, validarDescripcion, validarFechaLimite } from "../../../utils/validaciones";
-import "./TaskForm.css";
+ import { useState } from "react";
+ import type { PrioridadTarea, TareaNueva } from "../../../types/task";
+ import { useFormValidation } from "../../../hooks/useFormValidation";
+ import { useAlert }          from "../../../hooks/useAlert";
+ import { validarTitulo, validarDescripcion, validarFechaLimite } from "../../../utils/validaciones";
+ import "./TaskForm.css";
 
  type PropiedadesDeTaskForm = {
    alConfirmar: (datos: TareaNueva) => void;

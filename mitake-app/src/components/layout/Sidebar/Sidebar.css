@@ -1,8 +1,4 @@
-/* ============================================================
-   ARCHIVO: src/components/layout/Sidebar/Sidebar.css
-   ============================================================ */
-
-/* ---- OVERLAY — fondo oscuro en móvil ---- */
+ /* ---- OVERLAY — fondo oscuro en móvil ---- */
 .sidebar__overlay {
   display: none;
 }
@@ -244,4 +240,28 @@
 .sidebar__usuario-rol {
   color: rgba(255, 255, 255, 0.28);
   font-size: 11px;
+}
+/* Botón cerrar sesión */
+.sidebar__boton-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: none;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  text-align: left;
+}
+
+.sidebar__boton-logout:hover {
+  background-color: rgba(240, 149, 149, 0.08);
+  color: #f09595;
 }
